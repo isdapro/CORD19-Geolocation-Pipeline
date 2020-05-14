@@ -1,0 +1,39 @@
+{
+  "from":0, "size": 20,
+  "query": {
+    "bool": {
+      "must": [
+        {{#country}}
+          {
+            "multi_match": {
+              "query": "{{country}}",
+              "fields": ["addresses.country","addresses.country_code"],
+              "operator": "AND"
+              }
+          }
+        {{/country}}
+        {{#city}}
+          {{#country}}
+          ,
+          {{/country}}
+          {
+            "match": {
+              "addresses.city": {
+                "query": "{{city}}",
+                "operator": "AND"
+                }
+              }
+          }
+        {{/city}}
+      ],
+      "should": [
+        {"multi_match": {
+          "query": "{{institute}}",
+          "fields": ["name","aliases","acronyms"]
+        }}
+
+      ]
+
+    }
+  }
+}
