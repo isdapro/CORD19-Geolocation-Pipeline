@@ -12,6 +12,7 @@ class Geolocate(Operations):
 
     def execute(self):
         '''We will call various functions to execute the geolocation pipeline'''
+        print ("Starting geolocation...")
         extracted,to_extract = geo_diff_check(self._data)
 
         print("Clustering similar affiliations...")

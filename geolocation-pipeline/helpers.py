@@ -4,7 +4,8 @@ from ast import literal_eval
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity, linear_kernel
 from postal.parser import parse_address
-
+import re
+import sys
 
 BASE_DIR = os.getcwd()
 DATA_DIR = os.path.join(os.getcwd(),'data')
@@ -57,6 +58,8 @@ def scrape_diff_check(data):
         return extracted,to_extract
 
 def geo_diff_check(data):
+    if type(data['affiliate'][0])!=list:
+        data['affiliate'] = data['affiliate'].apply(literal_eval)
     data = data.explode('affiliate').reset_index()[['affiliate']]
     data = data.dropna()
     l = set()
@@ -114,8 +117,10 @@ def create_tfidf_dict(df):
 def cluster_tfidf(docTFIDF,df):
     master_dict = dict()
     size = docTFIDF.shape[0]
-    for i in range (0,size,10000):
-        cos_sim = linear_kernel(docTFIDF[i:min(size,i+10000)],docTFIDF)
+    for i in range (0,size,500):
+        print(str(((i*100)//size))+' % completed '+'\r')
+        sys.stdout.flush()
+        cos_sim = linear_kernel(docTFIDF[i:min(size,i+500)],docTFIDF)
         for j in range(0,cos_sim.shape[0]):
             master_dict[i+j] = list(df[cos_sim[j]>0.65].index)
     return master_dict
@@ -125,7 +130,7 @@ def splicomma(data):
     l2=[]
     for i in l:
         l2.append(i.lstrip(" ").rstrip(" "))
-        return l2
+    return l2
 
 def remove_digits(data):
     data = re.sub("\d+", "", data)
@@ -185,7 +190,7 @@ def institute_extractions(data, pred_dict):
     return st
 
 def master_address_extraction(data,pred_dict):
-    data['dict'] = data['affiliate'].apply(address_parse)
+    data['dict'] = data['cleaned'].apply(address_parse)
     data['city'] = data['dict'].apply(city_from_dict)
     data['city'] = data['city'].apply(remove_digits)
     data['country'] = data['dict'].apply(country_from_dict)

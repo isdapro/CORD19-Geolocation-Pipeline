@@ -5,10 +5,12 @@ from transformers import BertForSequenceClassification, AdamW, BertConfig
 from torch.utils.data import DataLoader, RandomSampler, SequentialSampler
 from torch.utils.data import TensorDataset, random_split
 from transformers import BertTokenizer
+from helpers import splicomma, remove_special
+import numpy as np
 
 #Source code for BERT Classification inspired from https://mccormickml.com/2019/07/22/BERT-fine-tuning/
 
-MODEL_DIR = os.path.join(os.getcwd(),'.model_bert')
+MODEL_DIR = os.path.join(os.getcwd(),'model_bert')
 
 def initialize():
     if torch.cuda.is_available():
@@ -48,9 +50,9 @@ def predict(model,tokenizer,device,data):
                         return_attention_mask = True,
                         return_tensors = 'pt',
                    )
-    output_ids.append(encoded_dict['input_ids'])
+        output_ids.append(encoded_dict['input_ids'])
 
-    output_attention_masks.append(encoded_dict['attention_mask'])
+        output_attention_masks.append(encoded_dict['attention_mask'])
 
     output_ids = torch.cat(output_ids, dim=0)
     output_attention_masks = torch.cat(output_attention_masks, dim=0)
@@ -70,9 +72,9 @@ def predict(model,tokenizer,device,data):
         with torch.no_grad():
             outputs = model(b_input_ids, token_type_ids=None,
                           attention_mask=b_input_mask)
-            logits = outputs[0]
-            logits = logits.detach().cpu().numpy()
-            predictions.append(logits)
+        logits = outputs[0]
+        logits = logits.detach().cpu().numpy()
+        predictions.append(logits)
 
     probs = tf.nn.sigmoid(np.concatenate(predictions,axis=0)[:,1])
     pred_dict=dict()

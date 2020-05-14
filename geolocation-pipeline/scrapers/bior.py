@@ -3,6 +3,7 @@ from tqdm import tqdm
 import pandas as pd
 import xml.etree.ElementTree as ElementTree
 from ratelimit import limits, sleep_and_retry
+from selenium import webdriver
 
 tqdm.pandas()
 

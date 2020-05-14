@@ -57,8 +57,8 @@ def elastic_query(index, bert_magic):
 
 def mapper(index, bert_magic, cluster_dict):
     score_dict = dict()
-    for i in cluster_dict[str(index)]:
-        res = elastic_query(i,bert_magic,template)
+    for i in cluster_dict[index]:
+        res = elastic_query(i,bert_magic)
         '''if len(res['hits']['hits'])==0:
             return "not found"
         res = res['hits']['hits'][0]
