@@ -113,7 +113,7 @@ def elastic_main(cluster_dict,bert_magic):
     print("Just doing some final operations now...")
 
     geo = pd.DataFrame(master_dict.items(), columns=['idx','grid_id'])
-    geo['idx'] = geo['idx'],astype(str).astype(int)
+    geo['idx'] = geo['idx'].astype(str).astype(int)
     df['idx'] = df.index
     merged = df.merge(geo,how='left',left_on='idx',right_on='idx')[['affiliate','grid_id']]
     add = pd.read_csv(os.path.join(os.getcwd(),'data','addresses.csv'))
