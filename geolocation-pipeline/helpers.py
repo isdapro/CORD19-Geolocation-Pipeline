@@ -6,6 +6,7 @@ from sklearn.metrics.pairwise import cosine_similarity, linear_kernel
 from postal.parser import parse_address
 import re
 import sys
+from tqdm import tqdm
 
 BASE_DIR = os.getcwd()
 DATA_DIR = os.path.join(os.getcwd(),'data')
@@ -40,7 +41,7 @@ def scrape_diff_check(data):
         if type(prev_df['affiliate'][0])!=list:
             prev_df['affiliate'] = prev_df['affiliate'].apply(literal_eval)
         #Handling the case when you already have the results for a newer version
-        if len(prev_df)>len(data):
+        if len(prev_df)>=len(data):
             print("Seems you already have the results for a version later than this")
             return prev_df,pd.DataFrame([])
 
@@ -58,12 +59,13 @@ def scrape_diff_check(data):
         return extracted,to_extract
 
 def geo_diff_check(data):
-    if type(data['affiliate'][0])!=list:
-        data['affiliate'] = data['affiliate'].apply(literal_eval)
-    data = data.explode('affiliate').reset_index()[['affiliate']]
-    data = data.dropna()
+    data2 = data
+    if type(data2['affiliate'][0])!=list:
+        data2['affiliate'] = data2['affiliate'].apply(literal_eval)
+    data2 = data2.explode('affiliate').reset_index()[['affiliate']]
+    data2 = data2.dropna()
     l = set()
-    for i in data['affiliate']:
+    for i in data2['affiliate']:
         j = i.replace("\n","").strip()
         if j:
             l.add(j)
@@ -73,17 +75,14 @@ def geo_diff_check(data):
 
         prev_df = pd.read_csv(os.path.join(DATA_DIR,'geolocated_affiliations.csv'))
         if len(prev_df)==0:
-            return prev_df,data
+            return prev_df,data2
 
-        if type(prev_df['affiliate'][0])!=list:
-            prev_df['affiliate'] = prev_df['affiliate'].apply(literal_eval)
-
-        if len(prev_df)>len(df):
+        if len(prev_df)>=len(df):
             print("Seems you already have the results for a version later than this")
             return prev_df,pd.DataFrame([])
 
         merged = df.merge(prev_df, how = 'left', left_on = 'affiliate', right_on = 'affiliate')
-        extracted = merged[merged.grid_id.notna()][['affiliate','grid_id']]
+        extracted = merged[merged.grid_id.notna()]
         to_extract = merged[merged.grid_id.isna()][['affiliate','grid_id']]
 
         return extracted,to_extract
@@ -195,6 +194,6 @@ def master_address_extraction(data,pred_dict):
     data['country'] = data['dict'].apply(country_from_dict)
     data['country'] = data['country'].apply(country_cleaner)
     print("Performing BERT Sequence classification...")
-    data['extracted'] = data['affiliate'].progress_apply(institute_extractions, args=(pred_dict,))
+    data['extracted'] = data['affiliate_split'].progress_apply(institute_extractions, args=(pred_dict,))
     data = data[['affiliate','extracted','country','city']]
     return data

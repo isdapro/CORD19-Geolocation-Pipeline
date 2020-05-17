@@ -31,9 +31,9 @@ def initialize():
 
 
 def predict(model,tokenizer,device,data):
-    data['affiliate'] = data['affiliate'].apply(splicomma)
+    data['affiliate_split'] = data['affiliate'].apply(splicomma)
     pred_set = set()
-    for i in data['affiliate']:
+    for i in data['affiliate_split']:
       for j in i:
         pred_set.add(remove_special(j))
     pred_set = list(pred_set)

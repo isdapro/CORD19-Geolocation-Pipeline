@@ -19,6 +19,8 @@ class Scrape(Operations):
 
         #Use diff to split into evaluated and to-evaluate
         extracted,to_extract = scrape_diff_check(self._data)
+        if len(to_extract)==0:
+            return
 
         #Split DF into different source providers
         df_else,df_medr,df_bior,df_pmc,df_others = scrape_map(to_extract)
@@ -36,8 +38,10 @@ class Scrape(Operations):
         print("Scraping PMC...")
         df_pmc = execute_scrape_pmc(df_pmc)
         print("PMC Scraping Complete!")
+        df_others = df_others.apply(lambda x: return [])
 
         #Concatenate and return full metadata
         results = scrape_reduce(df_else,df_medr,df_bior,df_pmc,df_others)
         final = pd.concat([extracted,results],axis=0)
+        final.dropna(subset=['affiliate'],inplace=True)
         final.to_csv(os.path.join(os.getcwd(),'data','scraped.csv'))

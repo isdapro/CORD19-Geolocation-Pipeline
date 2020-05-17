@@ -114,11 +114,15 @@ def elastic_main(cluster_dict,bert_magic):
 
     geo = pd.DataFrame(master_dict.items(), columns=['idx','grid_id'])
     geo['idx'] = geo['idx'].astype(str).astype(int)
-    df['idx'] = df.index
-    merged = df.merge(geo,how='left',left_on='idx',right_on='idx')[['affiliate','grid_id']]
+    bert_magic['idx'] = bert_magic.index
+    merged = bert_magic.merge(geo,how='left',left_on='idx',right_on='idx')[['affiliate','grid_id']]
     add = pd.read_csv(os.path.join(os.getcwd(),'data','addresses.csv'))
     final  = merged.merge(add,how='left',left_on='grid_id',right_on='grid_id')
 
-    final.to_csv(os.path.join(os.getcwd(),'data','geolocated_affiliations.csv'))
+    '''Potentially we can allow a Diff check by uncommenting the following line, however, I am investigating the
+    fact that a diff check could undermine the clustering approach and result in a hit on accuracy. So, for the time
+    being it has been commented out'''
+    
+    #final.to_csv(os.path.join(os.getcwd(),'data','geolocated_affiliations.csv'))
 
     return final
