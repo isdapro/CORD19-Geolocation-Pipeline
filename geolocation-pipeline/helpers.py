@@ -117,9 +117,7 @@ def create_tfidf_dict(df):
 def cluster_tfidf(docTFIDF,df):
     master_dict = dict()
     size = docTFIDF.shape[0]
-    for i in range (0,size,500):
-        print(str(((i*100)//size))+' % completed '+'\r')
-        sys.stdout.flush()
+    for i in tqdm(range(0,size,500)):
         cos_sim = linear_kernel(docTFIDF[i:min(size,i+500)],docTFIDF)
         for j in range(0,cos_sim.shape[0]):
             master_dict[i+j] = list(df[cos_sim[j]>0.65].index)
@@ -190,11 +188,13 @@ def institute_extractions(data, pred_dict):
     return st
 
 def master_address_extraction(data,pred_dict):
-    data['dict'] = data['cleaned'].apply(address_parse)
+    print("Parsing address...")
+    data['dict'] = data['cleaned'].progress_apply(address_parse)
     data['city'] = data['dict'].apply(city_from_dict)
     data['city'] = data['city'].apply(remove_digits)
     data['country'] = data['dict'].apply(country_from_dict)
     data['country'] = data['country'].apply(country_cleaner)
-    data['extracted'] = data['affiliate'].apply(institute_extractions, args=(pred_dict,))
+    print("Performing BERT Sequence classification...")
+    data['extracted'] = data['affiliate'].progress_apply(institute_extractions, args=(pred_dict,))
     data = data[['affiliate','extracted','country','city']]
     return data

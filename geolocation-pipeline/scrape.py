@@ -41,4 +41,3 @@ class Scrape(Operations):
         results = scrape_reduce(df_else,df_medr,df_bior,df_pmc,df_others)
         final = pd.concat([extracted,results],axis=0)
         final.to_csv(os.path.join(os.getcwd(),'data','scraped.csv'))
-        return final

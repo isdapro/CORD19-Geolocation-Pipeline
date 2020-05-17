@@ -36,8 +36,8 @@ if __name__ == '__main__':
 
     while True:
         print ("Enter 1 to change Elservier Key")
-        print ("Enter 2 to perform Scraping")
-        print ("Enter 3 to perform Geolocation")
+        print ("Enter 2 to perform Scraping on metadata")
+        print ("Enter 3 to perform Geolocation on scraped.csv")
         print ("Enter 4 to exit")
         print ()
         op = int(input())

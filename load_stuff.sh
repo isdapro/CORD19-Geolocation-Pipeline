@@ -1,11 +1,16 @@
 #!/bin/bash
 
+#chromedriver
+echo Installing ChromeDriver...
+apt update
+apt install chromium-chromedriver
+
 #Set up elastic search on Colab
 echo Setting up ElasticSearch on Localhost...
 wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-7.7.0-linux-x86_64.tar.gz -q
 tar -xzf elasticsearch-7.7.0-linux-x86_64.tar.gz
-sudo chown -R elasticsearch elasticsearch-7.7.0
-nohup sudo -u elasticsearch elasticsearch-7.7.0/bin/elasticsearch &
+sudo chown -R daemon:daemon elasticsearch-7.7.0
+nohup sudo -u daemon elasticsearch-7.7.0/bin/elasticsearch &
 #May take some time for ES to load
 
 #Set up libpostal
@@ -21,6 +26,9 @@ sudo make install
 sudo ldconfig
 cd ..
 
+echo Installing requirements...
+pip install -r requirements.txt
+
 #Fetching from GDrive
 echo Getting the pre-trained BERT model...
 cd geolocation-pipeline
@@ -29,7 +37,4 @@ unzip model_bert.zip
 
 echo Fetching cached data...
 wget --load-cookies /tmp/cookies.txt "https://drive.google.com/uc?export=download&confirm=$(wget --quiet --save-cookies /tmp/cookies.txt --keep-session-cookies --no-check-certificate 'https://drive.google.com/uc?export=download&id=1kVRTilriKGfnfZ3CeveihyirT_r0tNED' -O- | sed -rn 's/.*confirm=([0-9A-Za-z_]+).*/\1\n/p')&id=1kVRTilriKGfnfZ3CeveihyirT_r0tNED" -O data.zip && rm -rf /tmp/cookies.txt
-unzip data.zip
-
-echo Installing requirements...
-pip install -r requirements.txt
+unzip data.zip -d data/

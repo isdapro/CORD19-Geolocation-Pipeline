@@ -33,6 +33,5 @@ class Geolocate(Operations):
         t1 = self._data.explode('affiliate').reset_index()[['cord_uid','affiliate']]
         to_return = t1.merge(final,how='left',left_on='affiliate',right_on='affiliate')[['cord_uid','affiliate','grid_id','geonames_city_id','institute_name','lat','lng','city','state','state_code','country']]
 
+        to_return.to_csv(os.path.join(os.getcwd(),'data','geolocated_full_metadata.csv'))
         print("Geolocation DONE!")
-
-        return to_return
