@@ -33,3 +33,8 @@ I have provided a quick start Bash Script to load all of this into a Colab Noteb
 ```
 
 Here onwards, you can follow the instructions that you see on the screen. The script will allow you to choose to scrape, geolocate, change your API keys, etc.
+
+### What gets produced
+For each paper in CORD-19, you will be able to see the Institute where that paper originated from along with detailed GeoNames data regarding the location of that Institute (an interesting piece of information missing in Kaggle's CORD-19).
+
+Check https://medium.com/swlh/covid-19-research-papers-geolocation-c2d090bf9e06 for more details
