@@ -50,10 +50,10 @@ def scrape_diff_check(data):
             return prev_df,pd.DataFrame([])
 
         merged = data.merge(prev_df, how = 'left', left_on = 'cord_uid', right_on = 'cord_uid')
-        extracted = merged[merged.affiliate.notna()][['cord_uid','source_x_x','sha_x','doi_x','affiliate']]
-        to_extract = merged[merged.affiliate.isna()][['cord_uid','source_x_x','sha_x','doi_x','affiliate']]
-        extracted.columns = ['cord_uid','source_x','sha','doi','affiliate']
-        to_extract.columns = ['cord_uid','source_x','sha','doi','affiliate']
+        extracted = merged[merged.affiliate.notna()][['cord_uid','source_x','sha_x','doi_x','affiliate','license','pmcid','pubmed_id']]
+        to_extract = merged[merged.affiliate.isna()][['cord_uid','source_x','sha_x','doi_x','affiliate','license','pmcid','pubmed_id']]
+        extracted.columns = ['cord_uid','source_x','sha','doi','affiliate','license','pmcid','pubmed_id']
+        to_extract.columns = ['cord_uid','source_x','sha','doi','affiliate','license','pmcid','pubmed_id']
 
         return extracted,to_extract
 

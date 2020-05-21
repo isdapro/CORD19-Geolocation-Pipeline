@@ -38,7 +38,7 @@ class Scrape(Operations):
         print("Scraping PMC...")
         df_pmc = execute_pmc_main(df_pmc)
         print("PMC Scraping Complete!")
-        df_others = df_others.apply(lambda x: return [])
+        df_others = df_others.apply(lambda x: [])
 
         #Concatenate and return full metadata
         results = scrape_reduce(df_else,df_medr,df_bior,df_pmc,df_others)

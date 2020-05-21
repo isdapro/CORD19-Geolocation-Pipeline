@@ -22,7 +22,7 @@ def scrape_medr(data):
         wd.get("https://doi.org/"+data)
         wd.get(wd.current_url+".article-info")
         l=[]
-        for i in find_el("//ol[@class='affiliation-list']/li/address/span"):
+        for i in find_el("//ol[@class='affiliation-list']/li/address"):
             l.append(i.text)
         return l
     except:
