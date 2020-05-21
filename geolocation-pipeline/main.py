@@ -31,6 +31,8 @@ class Client:
 if __name__ == '__main__':
     api = input("Please enter your Elsevier API key. If you're only going to do Geolocation you may enter a blank key: ")
     user = Client(api)
+    #Reading in metadata from mongo service on CoronaWhy
+    
     data = pd.read_csv((os.path.join(os.getcwd(),'data','metadata.csv')))
     aff_data = pd.read_csv((os.path.join(os.getcwd(),'data','scraped.csv')))
 

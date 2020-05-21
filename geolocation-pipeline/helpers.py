@@ -12,12 +12,16 @@ BASE_DIR = os.getcwd()
 DATA_DIR = os.path.join(os.getcwd(),'data')
 
 def scrape_map(meta):
-    meta_pmc = meta[meta.pmcid.notna()]
-    meta_non_pmc = meta[meta.pmcid.isna()]
-    meta_else = meta_non_pmc[meta_non_pmc.source_x.str.contains("Els")]
-    meta_bior=meta_non_pmc[meta_non_pmc.source_x.str.contains("bio")]
-    meta_medr = meta_non_pmc[meta_non_pmc.source_x.str.contains("medr")]
-    others = meta_non_pmc[meta_non_pmc.source_x.str.contains("CZI|WHO")]
+    cols = ['pmcid','pubmed_id']
+    meta_pmc = meta[meta[cols].notna().any(1)]
+    meta_non_pmc = meta[meta[cols].isna().all(1)]
+    #CORD v22 shows higher match for pubmed so retiring old logic
+    #meta_pmc = meta[meta.pmcid.notna()]
+    #meta_non_pmc = meta[meta.pmcid.isna()]
+    meta_else = meta_non_pmc[meta_non_pmc.license.str.contains("els")]
+    meta_bior=meta_non_pmc[meta_non_pmc.license.str.contains("bio")]
+    meta_medr = meta_non_pmc[meta_non_pmc.license.str.contains("medr")]
+    others = meta_non_pmc[meta_non_pmc.license.str.contains("unk|arx")]
     original_len = len(meta)
     mapped_len = len(meta_pmc)+len(meta_else)+len(meta_bior)+len(meta_medr)
     if original_len!=mapped_len:

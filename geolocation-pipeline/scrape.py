@@ -6,7 +6,7 @@ from helpers import scrape_diff_check, scrape_map, scrape_reduce
 from scrapers.elsev import execute_scrape_else
 from scrapers.medr import execute_scrape_medr
 from scrapers.bior import execute_scrape_bior
-from scrapers.pmc import execute_scrape_pmc
+from scrapers.pmc import execute_pmc_main
 
 
 class Scrape(Operations):
@@ -36,7 +36,7 @@ class Scrape(Operations):
         df_bior = execute_scrape_bior(df_bior)
         print("BiorXiv Scraping Complete!")
         print("Scraping PMC...")
-        df_pmc = execute_scrape_pmc(df_pmc)
+        df_pmc = execute_pmc_main(df_pmc)
         print("PMC Scraping Complete!")
         df_others = df_others.apply(lambda x: return [])
 
